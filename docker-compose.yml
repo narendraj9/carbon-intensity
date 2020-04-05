@@ -15,7 +15,7 @@ services:
     depends_on:
       - influxdb
     environment:
-      - INFLUXDB_URI="http://influxdb:9999"
+      - INFLUXDB_URI=http://influxdb:9999
       - INFLUXDB_ORG=${INFLUXDB_ORG}
       - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
