@@ -57,7 +57,6 @@
              (.plus ts (Duration/ofMillis interval-millis)))
            start-ts))
 
-
 (defn poll-for-ts-stream
   "Poll the carbon intensity API forever to get values for time stamps
   in the input ts-stream.  If the timestamp is the past, query
