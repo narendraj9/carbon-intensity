@@ -63,12 +63,12 @@
   immediately, otherwise wait for a suitable period before querying again."
   [influxdb ts-stream]
   (doseq [ts ts-stream]
-    (log/info "Querying Carbon Intensity for:" (str ts))
+    (log/debug "Querying Carbon Intensity for:" (str ts))
     (loop [carbon-intensity (get-carbon-intensity ts)]
       (if (some? carbon-intensity)
         (do
           (db/add-data-point! influxdb ts carbon-intensity)
-          (log/info "Added: " (str ts) "|" carbon-intensity))
+          (log/debug "Added: " (str ts) "|" carbon-intensity))
         (do
           (log/info "Carbon intensity for " ts " not yet available.")
           (log/info "Sleeping for" polling-interval-millis " millis.")
@@ -81,6 +81,7 @@
                                   (System/getenv "INFLUXDB_ORG")
                                   (System/getenv "INFLUXDB_BUCKET")
                                   (System/getenv "INFLUXDB_TOKEN"))]
+    (log/info "Visit http://localhost:9999 and create a dashboard for CO2/kwH bucket.")
     (->> (start-ts influxdb)
          (ts-stream polling-interval-millis)
          (poll-for-ts-stream influxdb))))
