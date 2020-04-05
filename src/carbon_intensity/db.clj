@@ -12,7 +12,6 @@
    :bucket   bucket
    :token    token})
 
-
 (defn ^:private write!
   "Write a metric with (ts, value) to InfluxDB."
   [{:keys [endpoint org bucket token] :as _influxdb} metric-name ^Instant ts value]
@@ -27,7 +26,6 @@
                                :body         body})]
       (if (not= 204 (:status response))
         (throw (Exception. "Failed to write DB record.") )))))
-
 
 (defn ^:private query
   "Query InfluxDB with the input flux query."
@@ -44,7 +42,6 @@
     (if (not= 200 status)
       (throw (Exception. "Failed to query DB."))
       (csv/read-csv body))))
-
 
 (defn add-data-point!
   "Add a new data point with ts timestamp and carbon-intensity value."
