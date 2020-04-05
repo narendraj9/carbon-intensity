@@ -3,7 +3,7 @@
   (:require [carbon-intensity.db :as db]
             [clj-http.client :as http]
             [clojure.data.json :as json]
-            [clojure.tools.logging :as log])
+            [taoensso.timbre :as log])
   (:import [java.time Duration Instant]))
 
 (defonce api-url "https://api.carbonintensity.org.uk/intensity")
@@ -31,10 +31,12 @@
           ;; Else sleep for some time and retry with a new wait-ts
           ;; This branch in take if there was a failure on the server
           ;; side or if we queried the server too early for `ts`.
-          (do (Thread/sleep waiting-period)
-              (recur (if (< max-wait-interval waiting-period)
-                       min-wait-interval
-                       (* 2 waiting-period)))))))))
+          (do
+            (log/info "Sleeping for" waiting-period "millis.")
+            (Thread/sleep waiting-period)
+            (recur (if (< max-wait-interval waiting-period)
+                     min-wait-interval
+                     (* 2 waiting-period)))))))))
 
 (defn start-ts
   "Return the time Instant from which to start querying the carbon

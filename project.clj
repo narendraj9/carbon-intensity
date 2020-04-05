@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/data.json "1.0.0"]
                  [org.clojure/data.csv "1.0.0"]
-                 [org.clojure/tools.logging "1.0.0"]
+                 [com.taoensso/timbre "4.10.0"]
                  [clj-http "3.10.0"]]
   :main ^:skip-aot carbon-intensity.core
   :target-path "target/%s"
