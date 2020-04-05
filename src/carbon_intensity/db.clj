@@ -16,16 +16,16 @@
   "Write a metric with (ts, value) to InfluxDB."
   [{:keys [endpoint org bucket token] :as _influxdb} metric-name ^Instant ts value]
   ;; https://v2.docs.influxdata.com/v2.0/reference/syntax/line-protocol/#elements-of-line-protocol
-  (let [body (format "%s value=%s %s" metric-name value (.getEpochSecond ts))]
-    (let [response (http/post (str endpoint "/api/v2/write")
-                              {:query-params {:org       org
-                                              :bucket    bucket
-                                              :precision "s"}
-                               :headers      {:authorization (format "Token %s" token)}
-                               :content-type "text/plain"
-                               :body         body})]
-      (if (not= 204 (:status response))
-        (throw (Exception. "Failed to write DB record.") )))))
+  (let [body     (format "%s value=%s %s" metric-name value (.getEpochSecond ts))
+        response (http/post (str endpoint "/api/v2/write")
+                            {:query-params {:org       org
+                                            :bucket    bucket
+                                            :precision "s"}
+                             :headers      {:authorization (format "Token %s" token)}
+                             :content-type "text/plain"
+                             :body         body})]
+    (if (not= 204 (:status response))
+      (throw (Exception. "Failed to write DB record.") ))))
 
 (defn ^:private query
   "Query InfluxDB with the input flux query."
@@ -53,17 +53,17 @@
   [{:keys [bucket] :as influxdb} metric-name]
   ;; An arbitrary value for the period during which the last point
   ;; must have been added.
-  (let [possible-downtime-hours (* 7 24)]
-    (let [result
-          (query influxdb
-                 (format "from(bucket:\"%s\")
+  (let [possible-downtime-hours (* 7 24)
+        result
+        (query influxdb
+               (format "from(bucket:\"%s\")
                           |> range(start:-%sh)
                           |> filter(fn : (r) => r._measurement == \"%s\")
                           |> last()"
-                         bucket
-                         possible-downtime-hours
-                         metric-name))]
-      (when-let [last-point (and (< 1 (count result))
-                                 (apply zipmap (take 2 result)))]
-        {:ts    (Instant/parse (get last-point "_time"))
-         :value (get  last-point "_value")}))))
+                       bucket
+                       possible-downtime-hours
+                       metric-name))]
+    (when-let [last-point (and (< 1 (count result))
+                               (apply zipmap (take 2 result)))]
+      {:ts    (Instant/parse (get last-point "_time"))
+       :value (get  last-point "_value")})))
