@@ -25,7 +25,7 @@
                              :content-type "text/plain"
                              :body         body})]
     (if (not= 204 (:status response))
-      (throw (Exception. "Failed to write DB record.") ))))
+      (throw (Exception. "Failed to write DB record.")))))
 
 (defn ^:private query
   "Query InfluxDB with the input flux query."
