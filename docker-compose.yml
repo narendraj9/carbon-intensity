@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  influxdb:
+    # Using the beta version here because it packages all the TICK
+    # stack components in a single convenient docker image.
+    image: quay.io/influxdb/influxdb:2.0.0-beta
+    ports:
+      - "9999:9999"
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+
+  carbon-intensity:
+    build: .
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URI="http://influxdb:9999"
+      - INFLUXDB_ORG=${INFLUXDB_ORG}
+      - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+
+volumes:
+  influxdb-data: {}
