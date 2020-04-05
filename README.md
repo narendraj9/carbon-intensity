@@ -25,3 +25,9 @@ variables if made available to the `starth.sh` script.
 Initialize and start the application:
 
     $ ./start.sh
+
+After the application starts, it will start populating past data from
+the API. The data can be viewed using InfluxDB's dashboard available
+at <http://localhost:9999>. Here is an example dashboard:
+
+![Example Graph](resources/carbon-intensity-example-graph.png)
